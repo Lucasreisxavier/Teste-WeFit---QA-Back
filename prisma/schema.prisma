@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../data/dev.db"
+}
+
+model Movie {
+  id       String @id @default(uuid())
+  name     String
+  imageUrl String
+  quantity Int
+  price    Float
+
+  OrderItem OrderItem[]
+
+  @@map("movies")
+}
+
+model Order {
+  id     String @id @default(uuid())
+  status Int
+
+  OrderItem OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id       String @id @default(uuid())
+  quantity Int
+  amount   Float
+  orderId  String @map("order_id")
+  movieId  String @map("movie_id")
+
+  order Order @relation(fields: [orderId], references: [id])
+  movie Movie @relation(fields: [movieId], references: [id])
+
+  @@map("ordersItem")
+}
